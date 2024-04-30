@@ -1,0 +1,52 @@
+version: '3'
+
+vars:
+  EXE:
+    sh: |
+      if [[ "$(go env GOOS)" == "windows" ]]; then
+        echo ".exe"
+      else
+        echo ""
+      fi
+
+tasks:
+  mup:
+    desc: Task to run migrations
+    deps: ['build_migrate']
+    cmds:
+      - './dist/migrate/migrate{{.EXE}} up'
+
+  mstatus:
+    desc: Task to run migrations
+    deps: ['build_migrate']
+    cmds:
+      - './dist/migrate/migrate{{.EXE}} status'
+
+  genmodel:
+    desc: Generates models from database
+    deps: [ 'mup' ]
+    cmds:
+      - './dist/pggen/pggen{{.EXE}}'
+
+  gen:
+    desc: Calls all generation tasks
+    deps: [ 'genmodel' ]
+
+  build_serve:
+    desc: Task to build serve tool.
+    cmds:
+      - 'go build -o ./dist/serve/serve{{.EXE}} ./cmd/serve'
+
+  build_pggen:
+    desc: Task to build pggen tool.
+    cmds:
+      - 'go build -o ./dist/pggen/pggen{{.EXE}} ./cmd/pggen'
+
+  build_migrate:
+    desc: Task to build migrate tool.
+    cmds:
+      - 'go build -o ./dist/migrate/migrate{{.EXE}} ./cmd/migrate'
+
+  build:
+    desc: Calls all build tasks and depends on gen
+    deps: [ 'build_serve', 'build_pggen', 'build_migrate', 'gen' ]

@@ -1,0 +1,12 @@
+site:
+  name: Barkdog Blog
+  listen_addr: 127.0.0.1
+  listen_port: 7500
+  base_url: http://localhost:7500/
+  live_templates: true
+
+database:
+  host: localhost
+  user: barkadmin
+  database: barkdog
+  migrations_dir: migrations

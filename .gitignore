@@ -1,0 +1,8 @@
+coverage.out
+/migrate
+/pggen
+/serve
+/dist/migrate/migrate
+/dist/pggen/pggen
+/dist/serve/serve
+*.exe
