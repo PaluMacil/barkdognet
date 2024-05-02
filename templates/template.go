@@ -68,8 +68,8 @@ func (ts *TemplateSource) Get(route string) (*template.Template, error) {
 }
 
 func (ts *TemplateSource) loadTemplate(route string) (*template.Template, error) {
-	indexFile := path.Join(route, "index.gohtml")
-	tmpl, err := template.New("layout").Funcs(ts.getFuncMap()).ParseFS(ts.FS, "layout.gohtml", indexFile)
+	templateFile := path.Join(route, "index.gohtml")
+	tmpl, err := template.New("layout").Funcs(ts.getFuncMap()).ParseFS(ts.FS, templateFile, "layout.gohtml")
 	if err != nil {
 		return nil, err
 	}

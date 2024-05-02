@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/PaluMacil/barkdognet/configuration"
+	"github.com/PaluMacil/barkdognet/dist/ui"
 	"github.com/PaluMacil/barkdognet/site"
 	"github.com/PaluMacil/barkdognet/templates"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -36,7 +38,11 @@ func main() {
 				Keywords:    "",
 				Description: "",
 			}
-			if err := tmpl.Execute(w, layout); err != nil { // replace nil with actual data
+			data := struct {
+				Layout site.Layout
+				word   string
+			}{layout, "blah"}
+			if err := tmpl.Execute(w, data); err != nil { // replace nil with actual data
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 		}
@@ -53,11 +59,23 @@ func main() {
 				Keywords:    "",
 				Description: "",
 			}
-			if err := tmpl.Execute(w, layout); err != nil { // replace nil with actual data
+			data := struct {
+				Layout site.Layout
+				word   string
+			}{layout, "blah"}
+			if err := tmpl.Execute(w, data); err != nil { // replace nil with actual data
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 		}
 	})
+
+	var staticFS fs.FS
+	if config.Site.LiveTemplates {
+		staticFS = os.DirFS("dist/ui")
+	} else {
+		staticFS = ui.EmbeddedStaticFS
+	}
+	mux.Handle("/static/", http.StripPrefix("/static", http.FileServerFS(staticFS)))
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", config.Site.ListenAddr, config.Site.ListenPort),

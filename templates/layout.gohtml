@@ -5,30 +5,29 @@
     <head>
         <meta charset="utf-8">
 
-        <title>{{.Title}} - {{.Site.Name}}</title>
-
-        <title>{{.Title}} - {{.Site.Name}}</title>
-        {{ if .Keywords }}
-            <meta name="keywords" content="{{.Keywords}}">
+        <title>{{.Layout.Title}} - {{.Layout.Site.Name}}</title>
+        {{ if .Layout.Keywords }}
+            <meta name="keywords" content="{{.Layout.Keywords}}">
         {{ end }}
-        {{ if .Description }}
-            <meta name="description" content="{{.Description}}">
+        {{ if .Layout.Description }}
+            <meta name="description" content="{{.Layout.Description}}">
         {{ end }}
-        {{ if .Author }}
-            <meta name="author" content="{{.Author}}">
+        {{ if .Layout.Author }}
+            <meta name="author" content="{{.Layout.Author}}">
         {{ end }}
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <base href="{{.Site.BaseURL}}" />
-        <link rel="stylesheet" href="static/styles.css">
+        <base href="{{.Layout.Site.BaseURL}}" />
+        <link rel="stylesheet" href="static/index.css">
     </head>
 
     <body>
-        {{template "page" .}}
+        <img src="static/barkdog.svg" class="logo" alt="Logo" />
+        {{block "page" .}}{{end}}
         <div class="box footer">Copyright © {{ now | date "2006" }}
-            {{if .Author}}{{.Author}}{{else}}The Author{{end}}
+            {{if .Layout.Author}}{{.Layout.Author}}{{else}}The Author{{end}}
         </div>
-    <script src="static/main.js"></script>
+    <script src="static/index.js"></script>
     </body>
     </html>
 {{end}}
