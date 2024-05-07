@@ -23,5 +23,5 @@ type SysUser struct {
 	Locked              bool
 	PasswordHash        *[]byte
 	LastLoginAt         *time.Time
-	CreatedAt           *time.Time
+	CreatedAt           time.Time
 }

@@ -10,3 +10,7 @@ database:
   user: barkadmin
   database: barkdog
   migrations_dir: migrations
+
+env:
+  slug: local
+  log_level: info

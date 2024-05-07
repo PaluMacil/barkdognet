@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   EXE:
@@ -13,7 +13,6 @@ vars:
       echo "CREATE DATABASE barkdog; CREATE USER barkadmin LOGIN; ALTER DATABASE barkdog OWNER TO barkadmin;"
 
 tasks:
-
   resetdb:
     desc: Resets the database (requires yq)
     cmds:
@@ -49,52 +48,58 @@ tasks:
 
   mup:
     desc: Task to run migrations
-    deps: ['build_migrate']
+    deps: ["build_migrate"]
     cmds:
-      - './dist/migrate/migrate{{.EXE}} up'
+      - "./dist/migrate/migrate{{.EXE}} up"
 
   mstatus:
     desc: Task to run migrations
-    deps: ['build_migrate']
+    deps: ["build_migrate"]
     cmds:
-      - './dist/migrate/migrate{{.EXE}} status'
+      - "./dist/migrate/migrate{{.EXE}} status"
 
   genmodel:
     desc: Generates models from database
-    deps: [ 'mup' ]
+    deps: ["mup"]
     cmds:
-      - './dist/pggen/pggen{{.EXE}}'
+      - "./dist/pggen/pggen{{.EXE}}"
 
   gen:
     desc: Calls all generation tasks
-    deps: [ 'genmodel' ]
+    deps: ["genmodel"]
 
   build_serve:
     desc: Task to build serve tool.
-    deps: [ 'build_ui', 'gen' ]
+    deps: ["build_ui", "gen"]
     cmds:
-      - 'go build -o ./dist/serve/serve{{.EXE}} ./cmd/serve'
+      - "go build -o ./dist/serve/serve{{.EXE}} ./cmd/serve"
 
   build_pggen:
     desc: Task to build pggen tool.
     cmds:
-      - 'go build -o ./dist/pggen/pggen{{.EXE}} ./cmd/pggen'
+      - "go build -o ./dist/pggen/pggen{{.EXE}} ./cmd/pggen"
 
   build_migrate:
     desc: Task to build migrate tool.
     cmds:
-      - 'go build -o ./dist/migrate/migrate{{.EXE}} ./cmd/migrate'
+      - "go build -o ./dist/migrate/migrate{{.EXE}} ./cmd/migrate"
+
+  prettier:
+    desc: run prettier
+    cmds:
+      - yarn prettier . --write
 
   build_ui:
     desc: Build the frontend application.
+    deps: ["prettier"]
     cmds:
-      - 'node build_ui.js'
+      - "node build_ui.js"
 
   watch_ui:
     desc: Watch and rebuild the frontend application on changes.
     cmds:
-      - 'node build_ui.js --watch'
+      - "node build_ui.js --watch"
 
   build:
     desc: Calls all build tasks and depends on gen
-    deps: [ 'build_serve', 'build_pggen', 'build_migrate' ]
+    deps: ["build_serve", "build_pggen", "build_migrate"]

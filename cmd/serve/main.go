@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/PaluMacil/barkdognet/configuration"
-	"github.com/PaluMacil/barkdognet/dist/ui"
+	"github.com/PaluMacil/barkdognet/dist/static"
 	"github.com/PaluMacil/barkdognet/site"
 	"github.com/PaluMacil/barkdognet/templates"
 	"io/fs"
@@ -71,9 +71,9 @@ func main() {
 
 	var staticFS fs.FS
 	if config.Site.LiveTemplates {
-		staticFS = os.DirFS("dist/ui")
+		staticFS = os.DirFS("dist/static")
 	} else {
-		staticFS = ui.EmbeddedStaticFS
+		staticFS = static.EmbeddedStaticFS
 	}
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServerFS(staticFS)))
 

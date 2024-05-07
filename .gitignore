@@ -1,5 +1,6 @@
 node_modules/
 
+/coverage
 coverage.out
 /migrate
 /pggen
@@ -9,7 +10,6 @@ coverage.out
 /dist/serve/serve
 *.exe
 
-dist/ui/index.js
-dist/ui/index.css
-dist/ui/index.js.map
-dist/ui/index.css.map
+dist/static/*.js
+dist/static/*.css
+dist/**/*.map

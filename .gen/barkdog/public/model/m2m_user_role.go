@@ -7,12 +7,7 @@
 
 package model
 
-import (
-	"time"
-)
-
-type SysRole struct {
-	ID          int32 `sql:"primary_key"`
-	DisplayName string
-	CreatedAt   time.Time
+type M2mUserRole struct {
+	SysUserID int32 `sql:"primary_key"`
+	SysRoleID int32 `sql:"primary_key"`
 }

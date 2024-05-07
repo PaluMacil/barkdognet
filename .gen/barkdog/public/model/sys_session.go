@@ -11,8 +11,9 @@ import (
 	"time"
 )
 
-type SysRole struct {
-	ID          int32 `sql:"primary_key"`
-	DisplayName string
-	CreatedAt   time.Time
+type SysSession struct {
+	ID           int32 `sql:"primary_key"`
+	SysUserID    int32
+	SessionToken string
+	CreatedAt    time.Time
 }

@@ -11,8 +11,10 @@ import (
 	"time"
 )
 
-type SysRole struct {
-	ID          int32 `sql:"primary_key"`
-	DisplayName string
-	CreatedAt   time.Time
+type BlogComment struct {
+	ID         int32 `sql:"primary_key"`
+	AuthorID   int32
+	BlogPostID int32
+	Body       string
+	CreatedAt  time.Time
 }

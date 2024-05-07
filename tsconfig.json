@@ -26,9 +26,9 @@
       "ESNext.Array"
     ],
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "sourceMap": true,
-    "outDir": "dist/ui",
+    "outDir": "dist/static",
     "baseUrl": ".",
     "paths": {
       "*": ["src/*"]

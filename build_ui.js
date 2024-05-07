@@ -1,26 +1,27 @@
-const esbuild = require('esbuild');
-const sassPlugin = require('esbuild-sass-plugin').default;
+const esbuild = require("esbuild");
+const sassPlugin = require("esbuild-sass-plugin").default;
 
-const isWatchMode = process.argv.includes('--watch');
+const isWatchMode = process.argv.includes("--watch");
 const buildOptions = {
-    entryPoints: ['src/index.ts'],
-    bundle: true,
-    outdir: 'dist/ui/',
-    sourcemap: true,
-    splitting: true,
-    format: 'esm',
-    minify: true,
-    plugins: [sassPlugin()],
+  entryPoints: ["src/index.ts"],
+  bundle: true,
+  outdir: "dist/static/",
+  sourcemap: true,
+  splitting: true,
+  format: "esm",
+  minify: true,
+  plugins: [sassPlugin()],
 };
 
 if (isWatchMode) {
-    void esbuild.context(buildOptions)
-        .then(async (ctx) => {
-            await ctx.watch();
-        }).catch((err) => {
-            console.error('Error occurred during watch', err);
-        })
+  void esbuild
+    .context(buildOptions)
+    .then(async (ctx) => {
+      await ctx.watch();
+    })
+    .catch((err) => {
+      console.error("Error occurred during watch", err);
+    });
 } else {
-    esbuild.build(buildOptions).catch(() => process.exit(1));
+  esbuild.build(buildOptions).catch(() => process.exit(1));
 }
-

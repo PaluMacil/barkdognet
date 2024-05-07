@@ -1,3 +1,4 @@
-import './styles.scss';
+import "./styles.scss";
+import { testMe } from "form";
 
-console.log('Anakin says ITS WORKING!!!')
+console.log("Anakin says ITS WORKING!!!", testMe(3, 6));

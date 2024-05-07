@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"github.com/PaluMacil/barkdognet/configuration"
 	"github.com/lmittmann/tint"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
@@ -23,14 +24,22 @@ func isJetbrains() bool {
 // NewLogger creates a new instance of a slog.Logger depending on the given configuration. For
 // GitHub Actions, it will use plain text logging. In a terminal it will use colorized text, and
 // on a server it will output using JSON for structured logging.
-func NewLogger() *slog.Logger {
+func NewLogger(env configuration.Env) *slog.Logger {
 	w := os.Stderr
 	jetbrains := isJetbrains()
 	terminal := isatty.IsTerminal(w.Fd())
+	withValues := slog.String("env_slug", env.Slug)
 	if terminal || jetbrains {
-		return slog.New(
-			tint.NewHandler(colorable.NewColorable(w), nil),
-		)
+		tintOpts := &tint.Options{
+			AddSource: true,
+			Level:     env.SlogLevel(),
+		}
+		return slog.New(tint.NewHandler(colorable.NewColorable(w), tintOpts)).With(withValues)
 	}
-	return slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	jsonOpts := &slog.HandlerOptions{
+		AddSource: true,
+		Level:     env.SlogLevel(),
+	}
+	return slog.New(
+		slog.NewJSONHandler(os.Stdout, jsonOpts)).With(withValues)
 }

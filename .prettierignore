@@ -1,0 +1,8 @@
+node_modules/
+
+/coverage
+coverage.out
+
+dist/static/*.js
+dist/static/*.css
+dist/**/*.map

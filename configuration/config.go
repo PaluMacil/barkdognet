@@ -36,4 +36,5 @@ func (*DefaultProvider) Config() (*Config, error) {
 type Config struct {
 	Site     Site     `koanf:"site"`
 	Database Database `koanf:"database"`
+	Env      Env      `koanf:"env"`
 }

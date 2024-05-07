@@ -6,9 +6,20 @@
   "author": "Dan Wolf <dcwolf@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/jasmine": "^5.1.4",
     "@types/node": "^20.12.8",
     "esbuild": "^0.20.2",
     "esbuild-sass-plugin": "^3.2.0",
+    "karma": "^6.4.3",
+    "karma-esbuild": "^2.3.0",
+    "karma-typescript": "^5.5.4",
+    "karma-typescript-es6-transform": "^5.5.4",
+    "prettier": "3.2.5",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "jasmine-core": "^5.1.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0"
   }
 }

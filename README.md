@@ -12,6 +12,11 @@ See [Taskfile Install](https://taskfile.dev/installation/) or on MacOS:
 brew install go-task
 ```
 
+### UI Tooling
+
+- yarn
+- Karma CLI `npm install -g karma-cli`
+
 ## Database
 
 ```sql
@@ -50,3 +55,20 @@ go build -o ./dist/migrate/migrate ./cmd/migrate
 ./dist/migrate/migrate create fetch_user_data go
 ./dist/migrate/migrate up
 ```
+
+## TODO
+
+### Feature Areas
+
+ - Mockery/Tests
+ - ESLint
+ - OpenAPI codegen
+ - SMTP Configuration
+ - OidcConfig table
+
+### Security
+
+ - Failed count on user table for failed logins
+ - Delay to login attempt if Failed is too high (use configuration)
+ - Verify Email
+ - On create, allow Roles to be designated as Security Roles which means they have m2m to an OidcConfig

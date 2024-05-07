@@ -64,7 +64,7 @@ func newSysRoleTableImpl(schemaName, tableName, alias string) sysRoleTable {
 		DisplayNameColumn = postgres.StringColumn("display_name")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
 		allColumns        = postgres.ColumnList{IDColumn, DisplayNameColumn, CreatedAtColumn}
-		mutableColumns    = postgres.ColumnList{IDColumn, DisplayNameColumn, CreatedAtColumn}
+		mutableColumns    = postgres.ColumnList{DisplayNameColumn, CreatedAtColumn}
 	)
 
 	return sysRoleTable{
