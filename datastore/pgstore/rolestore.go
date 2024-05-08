@@ -30,7 +30,9 @@ func NewRoleStore(db *stdsql.DB, log *slog.Logger) *RoleStore {
 
 func (r RoleStore) Get(ctx context.Context, id int32) (*model.SysRole, error) {
 	var role *model.SysRole
-	stmt := SELECT(SysRole.AllColumns).FROM(SysRole).WHERE(SysRole.ID.EQ(Int32(id)))
+	stmt := SELECT(SysRole.AllColumns).
+		FROM(SysRole).
+		WHERE(SysRole.ID.EQ(Int32(id)))
 	if r.log.Enabled(ctx, slog.LevelDebug) {
 		r.log.DebugContext(ctx, "Get", slog.String("sql", stmt.DebugSql()), slog.Int("id", int(id)))
 	}
@@ -76,7 +78,9 @@ func (r RoleStore) Some(ctx context.Context, iden identifier.User) ([]model.SysR
 
 func (r RoleStore) All(ctx context.Context) ([]model.SysRole, error) {
 	var roles []model.SysRole
-	stmt := SELECT(SysRole.AllColumns).FROM(SysRole).ORDER_BY(SysRole.DisplayName.ASC())
+	stmt := SELECT(SysRole.AllColumns).
+		FROM(SysRole).
+		ORDER_BY(SysRole.DisplayName.ASC())
 	if r.log.Enabled(ctx, slog.LevelDebug) {
 		r.log.DebugContext(ctx, "All", slog.String("sql", stmt.DebugSql()))
 	}
@@ -119,13 +123,53 @@ func (r RoleStore) Create(ctx context.Context, role *model.SysRole) error {
 }
 
 func (r RoleStore) AddUser(ctx context.Context, roleID int32, userIden identifier.User) error {
-	//TODO implement me
-	panic("implement me")
+	if userIden.ID == nil {
+		if userIden.Email == nil {
+			id := fmt.Sprintf("roleID %d, user %s", roleID, userIden.Slog().String())
+			return identifier.ErrInsufficient{IdentString: id}
+		}
+		stmt2 := SELECT(SysUser.ID).
+			FROM(SysUser).
+			WHERE(SysUser.Email.EQ(String(*userIden.Email)))
+		err := stmt2.QueryContext(ctx, r.db, userIden.ID)
+		if err != nil {
+			return fmt.Errorf("while adding user to role, getting id from email: %w", err)
+		}
+	}
+	stmt := M2mUserRole.INSERT(SysRole.ID, SysUser.ID)
+	stmt = stmt.VALUES(roleID, userIden.ID)
+	_, err := stmt.ExecContext(ctx, r.db)
+	if err != nil {
+		return fmt.Errorf("adding user to role: %w", err)
+	}
+	return nil
 }
 
-func (r RoleStore) RemoveUser(ctx context.Context, roleId int32, userIden identifier.User) error {
-	//TODO implement me
-	panic("implement me")
+func (r RoleStore) RemoveUser(ctx context.Context, roleID int32, userIden identifier.User) error {
+
+	if userIden.ID == nil {
+		if userIden.Email == nil {
+			id := fmt.Sprintf("roleID %d, user %s", roleID, userIden.Slog().String())
+			return identifier.ErrInsufficient{IdentString: id}
+		}
+		stmt2 := SELECT(SysUser.ID).
+			FROM(SysUser).
+			WHERE(SysUser.Email.EQ(String(*userIden.Email)))
+		err := stmt2.QueryContext(ctx, r.db, userIden.ID)
+		if err != nil {
+			return fmt.Errorf("while removing user from role, getting id from email: %w", err)
+		}
+	}
+	stmt := M2mUserRole.DELETE().
+		WHERE(AND(
+			M2mUserRole.SysRoleID.EQ(Int32(roleID)),
+			M2mUserRole.SysUserID.EQ(Int32(*userIden.ID)),
+		))
+	_, err := stmt.ExecContext(ctx, r.db)
+	if err != nil {
+		return fmt.Errorf("removing user from role: %w", err)
+	}
+	return nil
 }
 
 func (r RoleStore) Delete(ctx context.Context, id int32) error {

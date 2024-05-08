@@ -138,7 +138,7 @@ func (u UserStore) Update(ctx context.Context, user *model.SysUser) error {
 		WHERE(SysUser.ID.EQ(Int32(user.ID)))
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		// TODO: log identity after adding the method to get one from a model
-		u.log.DebugContext(ctx, "UpdateUser", slog.String("sql", stmt.DebugSql()))
+		u.log.DebugContext(ctx, "Update", slog.String("sql", stmt.DebugSql()))
 	}
 	_, err := stmt.ExecContext(ctx, u.db)
 	if err != nil {
@@ -154,7 +154,6 @@ func (u UserStore) Create(ctx context.Context, user *model.SysUser) error {
 		MODEL(user).
 		RETURNING(SysUser.AllColumns)
 	if u.log.Enabled(ctx, slog.LevelDebug) {
-		// TODO: log identity after adding the method to get one from a model
 		u.log.DebugContext(ctx, "Create", slog.String("sql", stmt.DebugSql()))
 	}
 	err := stmt.QueryContext(ctx, u.db, user)
