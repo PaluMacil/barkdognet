@@ -60,15 +60,15 @@ go build -o ./dist/migrate/migrate ./cmd/migrate
 
 ### Feature Areas
 
- - Mockery/Tests
- - ESLint
- - OpenAPI codegen
- - SMTP Configuration
- - OidcConfig table
+- Mockery/Tests
+- ESLint
+- OpenAPI codegen
+- SMTP Configuration
+- OidcConfig table
 
 ### Security
 
- - Failed count on user table for failed logins
- - Delay to login attempt if Failed is too high (use configuration)
- - Verify Email
- - On create, allow Roles to be designated as Security Roles which means they have m2m to an OidcConfig
+- Failed count on user table for failed logins
+- Delay to login attempt if Failed is too high (use configuration)
+- Verify Email
+- On create, allow Roles to be designated as Security Roles which means they have m2m to an OidcConfig
