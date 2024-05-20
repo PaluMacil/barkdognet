@@ -1,0 +1,771 @@
+openapi: 3.0.0
+info:
+  title: Database Stores API
+  version: 1.0.0
+paths:
+  /users/{userID}:
+    get:
+      summary: Get a user by ID or email
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SysUser'
+        '404':
+          description: User not found
+    put:
+      summary: Update a user
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysUser'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: User not found
+    delete:
+      summary: Delete a user
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: User not found
+
+  /users:
+    get:
+      summary: Get all users
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SysUser'
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysUser'
+      responses:
+        '201':
+          description: Successful creation
+
+  /users/{userID}/password:
+    post:
+      summary: Set password for a user with reset/registration code
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                resetCode:
+                  type: string
+              required:
+                - password
+                - resetCode
+      responses:
+        '200':
+          description: Password set successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid user or password
+
+    put:
+      summary: Update password
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+              required:
+                - oldPassword
+                - newPassword
+      responses:
+        '200':
+          description: Password updated successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid user or password
+
+  /users/{userID}/lock:
+    put:
+      summary: Lock a user
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User locked successfully
+        '404':
+          description: User not found
+
+  /users/{userID}/unlock:
+    put:
+      summary: Unlock a user
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User unlocked successfully
+        '404':
+          description: User not found
+
+  /users/{userID}/roles:
+    get:
+      summary: Get all roles for a user
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of roles for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SysRole'
+        '404':
+          description: User not found
+
+  /users/{userID}/comments:
+    get:
+      summary: Get comments for a user with pagination
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments for the user
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /roles/{roleID}/users:
+    get:
+      summary: Get users for a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SysUser'
+        '404':
+          description: Role not found
+
+  /roles/{roleID}:
+    get:
+      summary: Get a role by ID
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SysRole'
+        '404':
+          description: Role not found
+    put:
+      summary: Update a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysRole'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Role not found
+    delete:
+      summary: Delete a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Role not found
+
+  /roles:
+    get:
+      summary: Get all roles
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SysRole'
+    put:
+      summary: Update a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysRole'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Role not found
+    post:
+      summary: Create a role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysRole'
+      responses:
+        '201':
+          description: Successful creation
+
+  /roles/{roleID}/user/{userID}:
+    put:
+      summary: Add a user to a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User added to role successfully
+        '404':
+          description: Role or user not found
+    delete:
+      summary: Remove a user from a role
+      parameters:
+        - name: roleID
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: userID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User removed from role successfully
+        '404':
+          description: Role or user not found
+
+  /sessions:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionContext'
+        '401':
+          description: Unauthorized
+
+  /sessions/{token}:
+    get:
+      summary: Get session context by token
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionContext'
+        '404':
+          description: Session not found
+
+    delete:
+      summary: Logout
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful logout
+
+  /categories/{categoryID}:
+    get:
+      summary: Get a blog category by ID
+      parameters:
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlogCategory'
+        '404':
+          description: Category not found
+    put:
+      summary: Update a blog category
+      parameters:
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogCategory'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Category not found
+    delete:
+      summary: Delete a blog category
+      parameters:
+        - name: categoryID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Category not found
+
+  /categories:
+    get:
+      summary: Get all blog categories
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogCategory'
+    post:
+      summary: Create a blog category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogCategory'
+      responses:
+        '201':
+          description: Successful creation
+
+  /posts/{postID}:
+    get:
+      summary: Get a blog post by ID
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlogPost'
+        '404':
+          description: Post not found
+    put:
+      summary: Update a blog post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogPost'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Post not found
+    delete:
+      summary: Delete a blog post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Post not found
+
+  /posts/{postID}/comments:
+    get:
+      summary: Get comments for a blog post with pagination
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: categoryID
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments for the blog post
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogComment'
+
+  /comments:
+    post:
+      summary: Create a new blog comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogComment'
+      responses:
+        '201':
+          description: Blog comment created successfully
+
+  /comments/{commentID}:
+    get:
+      summary: Get a blog comment by ID
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlogComment'
+        '404':
+          description: Comment not found
+    put:
+      summary: Update a blog comment
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogComment'
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Comment not found
+    delete:
+      summary: Delete a blog comment
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Comment not found
+
+components:
+  schemas:
+    SysUser:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Email:
+          type: string
+        EmailConfirmed:
+          type: boolean
+        DisplayName:
+          type: string
+        GivenName:
+          type: string
+          nullable: true
+        PhoneNumber:
+          type: string
+          nullable: true
+        PhoneNumberVerified:
+          type: boolean
+          nullable: true
+        FamilyName:
+          type: string
+          nullable: true
+        Locked:
+          type: boolean
+        PasswordHash:
+          type: string
+          nullable: true
+        LastLoginAt:
+          type: string
+          format: date-time
+          nullable: true
+        CreatedAt:
+          type: string
+          format: date-time
+    SysRole:
+      type: object
+      properties:
+        ID:
+          type: integer
+        DisplayName:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+    SysSession:
+      type: object
+      properties:
+        ID:
+          type: integer
+        SysUserID:
+          type: integer
+        SessionToken:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+    BlogCategory:
+      type: object
+      properties:
+        ID:
+          type: integer
+        CategoryName:
+          type: string
+    BlogComment:
+      type: object
+      properties:
+        ID:
+          type: integer
+        AuthorID:
+          type: integer
+        BlogPostID:
+          type: integer
+        Body:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+    BlogPost:
+      type: object
+      properties:
+        ID:
+          type: integer
+        CategoryID:
+          type: integer
+        Title:
+          type: string
+        Keywords:
+          type: string
+        Body:
+          type: string
+        AuthorID:
+          type: integer
+        CreatedAt:
+          type: string
+          format: date-time
+    M2mUserRole:
+      type: object
+      properties:
+        SysUserID:
+          type: integer
+        SysRoleID:
+          type: integer
+    SessionContext:
+      type: object
+      properties:
+        User:
+          $ref: '#/components/schemas/SysUser'
+        Roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/SysRole'
+        Session:
+          $ref: '#/components/schemas/SysSession'
