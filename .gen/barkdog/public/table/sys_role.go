@@ -19,6 +19,7 @@ type sysRoleTable struct {
 	// Columns
 	ID          postgres.ColumnInteger
 	DisplayName postgres.ColumnString
+	Description postgres.ColumnString
 	CreatedAt   postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -62,9 +63,10 @@ func newSysRoleTableImpl(schemaName, tableName, alias string) sysRoleTable {
 	var (
 		IDColumn          = postgres.IntegerColumn("id")
 		DisplayNameColumn = postgres.StringColumn("display_name")
+		DescriptionColumn = postgres.StringColumn("description")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
-		allColumns        = postgres.ColumnList{IDColumn, DisplayNameColumn, CreatedAtColumn}
-		mutableColumns    = postgres.ColumnList{DisplayNameColumn, CreatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, DisplayNameColumn, DescriptionColumn, CreatedAtColumn}
+		mutableColumns    = postgres.ColumnList{DisplayNameColumn, DescriptionColumn, CreatedAtColumn}
 	)
 
 	return sysRoleTable{
@@ -73,6 +75,7 @@ func newSysRoleTableImpl(schemaName, tableName, alias string) sysRoleTable {
 		//Columns
 		ID:          IDColumn,
 		DisplayName: DisplayNameColumn,
+		Description: DescriptionColumn,
 		CreatedAt:   CreatedAtColumn,
 
 		AllColumns:     allColumns,

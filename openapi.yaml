@@ -769,3 +769,16 @@ components:
             $ref: '#/components/schemas/SysRole'
         Session:
           $ref: '#/components/schemas/SysSession'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    XSessionToken:
+      type: apiKey
+      in: header
+      name: X-Session-Token
+
+security:
+  - BearerAuth: [ ]
+  - XSessionToken: [ ]

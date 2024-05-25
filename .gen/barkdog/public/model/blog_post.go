@@ -15,6 +15,9 @@ type BlogPost struct {
 	ID         int32 `sql:"primary_key"`
 	CategoryID int32
 	Title      string
+	Slug       string
+	Summary    *string
+	Status     PostStatus
 	Keywords   string
 	Body       string
 	AuthorID   int32

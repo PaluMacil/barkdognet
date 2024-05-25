@@ -17,18 +17,25 @@ type sysUserTable struct {
 	postgres.Table
 
 	// Columns
-	ID                  postgres.ColumnInteger
-	Email               postgres.ColumnString
-	EmailConfirmed      postgres.ColumnBool
-	DisplayName         postgres.ColumnString
-	GivenName           postgres.ColumnString
-	PhoneNumber         postgres.ColumnString
-	PhoneNumberVerified postgres.ColumnBool
-	FamilyName          postgres.ColumnString
-	Locked              postgres.ColumnBool
-	PasswordHash        postgres.ColumnString
-	LastLoginAt         postgres.ColumnTimestampz
-	CreatedAt           postgres.ColumnTimestampz
+	ID                            postgres.ColumnInteger
+	Email                         postgres.ColumnString
+	EmailVerified                 postgres.ColumnBool
+	EmailVerificationHash         postgres.ColumnString
+	EmailVerificationCodeIssuedAt postgres.ColumnTimestampz
+	PasswordResetHash             postgres.ColumnString
+	PasswordResetCodeIssuedAt     postgres.ColumnTimestampz
+	DisplayName                   postgres.ColumnString
+	GivenName                     postgres.ColumnString
+	FamilyName                    postgres.ColumnString
+	PhoneNumber                   postgres.ColumnString
+	PhoneNumberVerified           postgres.ColumnBool
+	Location                      postgres.ColumnString
+	Locked                        postgres.ColumnBool
+	PasswordHash                  postgres.ColumnString
+	LastLoginAt                   postgres.ColumnTimestampz
+	CreatedAt                     postgres.ColumnTimestampz
+	Bio                           postgres.ColumnString
+	SocialLinks                   postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,38 +76,52 @@ func newSysUserTable(schemaName, tableName, alias string) *SysUserTable {
 
 func newSysUserTableImpl(schemaName, tableName, alias string) sysUserTable {
 	var (
-		IDColumn                  = postgres.IntegerColumn("id")
-		EmailColumn               = postgres.StringColumn("email")
-		EmailConfirmedColumn      = postgres.BoolColumn("email_confirmed")
-		DisplayNameColumn         = postgres.StringColumn("display_name")
-		GivenNameColumn           = postgres.StringColumn("given_name")
-		PhoneNumberColumn         = postgres.StringColumn("phone_number")
-		PhoneNumberVerifiedColumn = postgres.BoolColumn("phone_number_verified")
-		FamilyNameColumn          = postgres.StringColumn("family_name")
-		LockedColumn              = postgres.BoolColumn("locked")
-		PasswordHashColumn        = postgres.StringColumn("password_hash")
-		LastLoginAtColumn         = postgres.TimestampzColumn("last_login_at")
-		CreatedAtColumn           = postgres.TimestampzColumn("created_at")
-		allColumns                = postgres.ColumnList{IDColumn, EmailColumn, EmailConfirmedColumn, DisplayNameColumn, GivenNameColumn, PhoneNumberColumn, PhoneNumberVerifiedColumn, FamilyNameColumn, LockedColumn, PasswordHashColumn, LastLoginAtColumn, CreatedAtColumn}
-		mutableColumns            = postgres.ColumnList{EmailColumn, EmailConfirmedColumn, DisplayNameColumn, GivenNameColumn, PhoneNumberColumn, PhoneNumberVerifiedColumn, FamilyNameColumn, LockedColumn, PasswordHashColumn, LastLoginAtColumn, CreatedAtColumn}
+		IDColumn                            = postgres.IntegerColumn("id")
+		EmailColumn                         = postgres.StringColumn("email")
+		EmailVerifiedColumn                 = postgres.BoolColumn("email_verified")
+		EmailVerificationHashColumn         = postgres.StringColumn("email_verification_hash")
+		EmailVerificationCodeIssuedAtColumn = postgres.TimestampzColumn("email_verification_code_issued_at")
+		PasswordResetHashColumn             = postgres.StringColumn("password_reset_hash")
+		PasswordResetCodeIssuedAtColumn     = postgres.TimestampzColumn("password_reset_code_issued_at")
+		DisplayNameColumn                   = postgres.StringColumn("display_name")
+		GivenNameColumn                     = postgres.StringColumn("given_name")
+		FamilyNameColumn                    = postgres.StringColumn("family_name")
+		PhoneNumberColumn                   = postgres.StringColumn("phone_number")
+		PhoneNumberVerifiedColumn           = postgres.BoolColumn("phone_number_verified")
+		LocationColumn                      = postgres.StringColumn("location")
+		LockedColumn                        = postgres.BoolColumn("locked")
+		PasswordHashColumn                  = postgres.StringColumn("password_hash")
+		LastLoginAtColumn                   = postgres.TimestampzColumn("last_login_at")
+		CreatedAtColumn                     = postgres.TimestampzColumn("created_at")
+		BioColumn                           = postgres.StringColumn("bio")
+		SocialLinksColumn                   = postgres.StringColumn("social_links")
+		allColumns                          = postgres.ColumnList{IDColumn, EmailColumn, EmailVerifiedColumn, EmailVerificationHashColumn, EmailVerificationCodeIssuedAtColumn, PasswordResetHashColumn, PasswordResetCodeIssuedAtColumn, DisplayNameColumn, GivenNameColumn, FamilyNameColumn, PhoneNumberColumn, PhoneNumberVerifiedColumn, LocationColumn, LockedColumn, PasswordHashColumn, LastLoginAtColumn, CreatedAtColumn, BioColumn, SocialLinksColumn}
+		mutableColumns                      = postgres.ColumnList{EmailColumn, EmailVerifiedColumn, EmailVerificationHashColumn, EmailVerificationCodeIssuedAtColumn, PasswordResetHashColumn, PasswordResetCodeIssuedAtColumn, DisplayNameColumn, GivenNameColumn, FamilyNameColumn, PhoneNumberColumn, PhoneNumberVerifiedColumn, LocationColumn, LockedColumn, PasswordHashColumn, LastLoginAtColumn, CreatedAtColumn, BioColumn, SocialLinksColumn}
 	)
 
 	return sysUserTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:                  IDColumn,
-		Email:               EmailColumn,
-		EmailConfirmed:      EmailConfirmedColumn,
-		DisplayName:         DisplayNameColumn,
-		GivenName:           GivenNameColumn,
-		PhoneNumber:         PhoneNumberColumn,
-		PhoneNumberVerified: PhoneNumberVerifiedColumn,
-		FamilyName:          FamilyNameColumn,
-		Locked:              LockedColumn,
-		PasswordHash:        PasswordHashColumn,
-		LastLoginAt:         LastLoginAtColumn,
-		CreatedAt:           CreatedAtColumn,
+		ID:                            IDColumn,
+		Email:                         EmailColumn,
+		EmailVerified:                 EmailVerifiedColumn,
+		EmailVerificationHash:         EmailVerificationHashColumn,
+		EmailVerificationCodeIssuedAt: EmailVerificationCodeIssuedAtColumn,
+		PasswordResetHash:             PasswordResetHashColumn,
+		PasswordResetCodeIssuedAt:     PasswordResetCodeIssuedAtColumn,
+		DisplayName:                   DisplayNameColumn,
+		GivenName:                     GivenNameColumn,
+		FamilyName:                    FamilyNameColumn,
+		PhoneNumber:                   PhoneNumberColumn,
+		PhoneNumberVerified:           PhoneNumberVerifiedColumn,
+		Location:                      LocationColumn,
+		Locked:                        LockedColumn,
+		PasswordHash:                  PasswordHashColumn,
+		LastLoginAt:                   LastLoginAtColumn,
+		CreatedAt:                     CreatedAtColumn,
+		Bio:                           BioColumn,
+		SocialLinks:                   SocialLinksColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

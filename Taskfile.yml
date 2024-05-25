@@ -60,7 +60,7 @@ tasks:
 
   genmodel:
     desc: Generates models from database
-    deps: ["mup"]
+    deps: ["build_pggen", "mup"]
     cmds:
       - "./dist/pggen/pggen{{.EXE}}"
 

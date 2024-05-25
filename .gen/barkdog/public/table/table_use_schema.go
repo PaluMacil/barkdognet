@@ -12,8 +12,12 @@ package table
 func UseSchema(schema string) {
 	BlogCategory = BlogCategory.FromSchema(schema)
 	BlogComment = BlogComment.FromSchema(schema)
+	BlogCommentLike = BlogCommentLike.FromSchema(schema)
 	BlogPost = BlogPost.FromSchema(schema)
+	BlogPostLike = BlogPostLike.FromSchema(schema)
+	BlogTag = BlogTag.FromSchema(schema)
 	GooseDbVersion = GooseDbVersion.FromSchema(schema)
+	M2mBlogPostTag = M2mBlogPostTag.FromSchema(schema)
 	M2mUserRole = M2mUserRole.FromSchema(schema)
 	SysRole = SysRole.FromSchema(schema)
 	SysSession = SysSession.FromSchema(schema)

@@ -12,16 +12,23 @@ import (
 )
 
 type SysUser struct {
-	ID                  int32 `sql:"primary_key"`
-	Email               string
-	EmailConfirmed      bool
-	DisplayName         string
-	GivenName           *string
-	PhoneNumber         *string
-	PhoneNumberVerified *bool
-	FamilyName          *string
-	Locked              bool
-	PasswordHash        *[]byte
-	LastLoginAt         *time.Time
-	CreatedAt           time.Time
+	ID                            int32 `sql:"primary_key"`
+	Email                         string
+	EmailVerified                 bool
+	EmailVerificationHash         *[]byte
+	EmailVerificationCodeIssuedAt *time.Time
+	PasswordResetHash             *[]byte
+	PasswordResetCodeIssuedAt     *time.Time
+	DisplayName                   string
+	GivenName                     string
+	FamilyName                    string
+	PhoneNumber                   *string
+	PhoneNumberVerified           bool
+	Location                      string
+	Locked                        bool
+	PasswordHash                  *[]byte
+	LastLoginAt                   *time.Time
+	CreatedAt                     time.Time
+	Bio                           string
+	SocialLinks                   string
 }

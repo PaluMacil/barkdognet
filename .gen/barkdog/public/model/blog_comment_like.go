@@ -11,11 +11,8 @@ import (
 	"time"
 )
 
-type SysSession struct {
-	ID           int32 `sql:"primary_key"`
-	SysUserID    int32
-	SessionToken string
-	CreatedAt    time.Time
-	IPAddress    string
-	UserAgent    string
+type BlogCommentLike struct {
+	UserID    int32 `sql:"primary_key"`
+	CommentID int32 `sql:"primary_key"`
+	CreatedAt time.Time
 }

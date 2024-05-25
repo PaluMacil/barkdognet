@@ -16,5 +16,6 @@ type BlogComment struct {
 	AuthorID   int32
 	BlogPostID int32
 	Body       string
+	Status     CommentStatus
 	CreatedAt  time.Time
 }

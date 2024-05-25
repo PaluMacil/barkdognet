@@ -19,11 +19,35 @@ brew install go-task
 
 ## Database
 
+On Linux or Mac, `task resetdb` can do this.
 ```sql
 CREATE DATABASE barkdog;
 CREATE USER barkadmin LOGIN;
 ALTER DATABASE barkdog OWNER TO barkadmin;
 ```
+
+You can use the database with no password if this fits your security posture:
+- Set the connection to trust (find pg_hba.conf with `SHOW hba_file;` using an admin)
+- Restart Postgres
+  - Win:
+  ```
+  net stop postgresql-x64-13
+  net start postgresql-x64-13
+  ```
+  - Mac (if installed via Brew):
+  ```
+  brew services restart postgresql
+  ```
+  - Linux
+  ```
+  sudo systemctl restart postgresql
+  ```
+  
+Otherwise, set a password:
+```sql
+ALTER USER barkadmin WITH PASSWORD 'localdevpw';
+```
+You will need to specify the password in [barkconf.yaml](barkconf.yaml) or 
 
 ## Codegen
 

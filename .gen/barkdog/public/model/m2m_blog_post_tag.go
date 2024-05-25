@@ -7,13 +7,7 @@
 
 package model
 
-import (
-	"time"
-)
-
-type SysRole struct {
-	ID          int32 `sql:"primary_key"`
-	DisplayName string
-	Description string
-	CreatedAt   time.Time
+type M2mBlogPostTag struct {
+	BlogPostID int32 `sql:"primary_key"`
+	TagID      int32 `sql:"primary_key"`
 }
