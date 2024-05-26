@@ -7,7 +7,7 @@ import (
 	"github.com/go-jet/jet/v2/postgres"
 )
 
-// UserProvider provides User retrieval and manipulation
+// UserProvider is an interface for operations on User.
 type UserProvider interface {
 	GetUser(ctx context.Context, iden identifier.User) (*model.SysUser, error)
 	All(ctx context.Context, orderBy ...postgres.OrderByClause) ([]model.SysUser, error)
@@ -21,7 +21,7 @@ type UserProvider interface {
 	Delete(ctx context.Context, iden identifier.User) error
 }
 
-// RoleProvider provides Role retrieval and manipulation
+// RoleProvider is an interface for operations on Role.
 type RoleProvider interface {
 	Get(ctx context.Context, id int32) (*model.SysRole, error)
 	Some(ctx context.Context, iden identifier.User) ([]model.SysRole, error)
@@ -33,6 +33,7 @@ type RoleProvider interface {
 	Delete(ctx context.Context, id int32) error
 }
 
+// SessionProvider is an interface for operations on Session.
 type SessionProvider interface {
 	GetContext(ctx context.Context, iden identifier.Session) (identifier.SessionContext, error)
 	Get(ctx context.Context, iden identifier.Session) (*model.SysSession, error)
@@ -40,6 +41,7 @@ type SessionProvider interface {
 	Delete(ctx context.Context, iden identifier.Session) error
 }
 
+// BlogCategoryProvider is an interface for operations on BlogCategory.
 type BlogCategoryProvider interface {
 	Get(ctx context.Context, id int32) (*model.BlogCategory, error)
 	All(ctx context.Context) ([]model.BlogCategory, error)
@@ -48,15 +50,18 @@ type BlogCategoryProvider interface {
 	Delete(ctx context.Context, id model.BlogCategory) error
 }
 
+// BlogPostProvider is an interface for operations on BlogPost.
 type BlogPostProvider interface {
 	Get(ctx context.Context, id int32) (*model.BlogPost, error)
 	Some(ctx context.Context, categoryID *int32, page, pageSize int64) ([]model.BlogPost, error)
+	GetTags(ctx context.Context, postID int32) ([]model.BlogTag, error)
 	All(ctx context.Context, categoryID *int32) ([]model.BlogPost, error)
 	Create(ctx context.Context, blogPost *model.BlogPost) error
 	Update(ctx context.Context, blogPost *model.BlogPost) error
 	Delete(ctx context.Context, id int32) error
 }
 
+// BlogCommentProvider is an interface for operations on BlogComment.
 type BlogCommentProvider interface {
 	Get(ctx context.Context, id int32) (*model.BlogComment, error)
 	SomeForBlogPost(ctx context.Context, blogPostID int32, page, pageSize int64) ([]model.BlogComment, error)
@@ -64,5 +69,33 @@ type BlogCommentProvider interface {
 	SomeForUser(ctx context.Context, userIden identifier.User, page, pageSize int64) ([]model.BlogComment, error)
 	Create(ctx context.Context, blogComment *model.BlogComment) error
 	Update(ctx context.Context, blogComment *model.BlogComment) error
+	Delete(ctx context.Context, id int32) error
+}
+
+// BlogCommentLikeProvider is an interface for operations on BlogCommentLike.
+type BlogCommentLikeProvider interface {
+	Get(ctx context.Context, userID, commentID int32) (*model.BlogCommentLike, error)
+	AllForComment(ctx context.Context, commentID int32) ([]model.BlogCommentLike, error)
+	CountForComment(ctx context.Context, commentID int32) (int, error)
+	Create(ctx context.Context, like *model.BlogCommentLike) error
+	Delete(ctx context.Context, userID, commentID int32) error
+}
+
+// BlogPostLikeProvider is an interface for operations on BlogPostLike.
+type BlogPostLikeProvider interface {
+	Get(ctx context.Context, userID, postID int32) (*model.BlogPostLike, error)
+	AllForPost(ctx context.Context, postID int32) ([]model.BlogPostLike, error)
+	CountForPost(ctx context.Context, postID int32) (int, error)
+	Create(ctx context.Context, like *model.BlogPostLike) error
+	Delete(ctx context.Context, userID, postID int32) error
+}
+
+// BlogTagProvider is an interface for operations on BlogTag.
+type BlogTagProvider interface {
+	Get(ctx context.Context, id int32) (*model.BlogTag, error)
+	AllForPost(ctx context.Context, postID int32) ([]model.BlogTag, error)
+	All(ctx context.Context) ([]model.BlogTag, error)
+	Create(ctx context.Context, tag *model.BlogTag) error
+	Update(ctx context.Context, tag *model.BlogTag) error
 	Delete(ctx context.Context, id int32) error
 }

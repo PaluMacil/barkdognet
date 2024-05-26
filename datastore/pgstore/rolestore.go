@@ -55,9 +55,10 @@ func (r RoleStore) Some(ctx context.Context, iden identifier.User) ([]model.SysR
 	var roles []model.SysRole
 	stmt := SELECT(SysRole.AllColumns).
 		FROM(SysRole.
-			INNER_JOIN(M2mUserRole, SysUser.ID.EQ(M2mUserRole.SysUserID)).
-			INNER_JOIN(SysUser, SysRole.ID.EQ(M2mUserRole.SysUserID)),
-		)
+			INNER_JOIN(M2mUserRole, SysRole.ID.EQ(M2mUserRole.SysRoleID)).
+			INNER_JOIN(SysUser, SysUser.ID.EQ(M2mUserRole.SysUserID)),
+		).
+		ORDER_BY(SysRole.DisplayName.ASC())
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysUser.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Email != nil {

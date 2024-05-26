@@ -335,7 +335,7 @@ paths:
         '201':
           description: Successful creation
 
-  /roles/{roleID}/user/{userID}:
+  /roles/{roleID}/users/{userID}:
     put:
       summary: Add a user to a role
       parameters:
@@ -589,6 +589,91 @@ paths:
                 items:
                   $ref: '#/components/schemas/BlogComment'
 
+  /posts/{postID}/likes:
+    get:
+      summary: Get like information for a post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: details
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Like information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  me:
+                    type: boolean
+                  details:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LikeDetail'
+
+    post:
+      summary: Like a post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: User ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userID:
+                  type: integer
+      responses:
+        '200':
+          description: Post liked
+
+    delete:
+      summary: Unlike a post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post unliked
+
+  /posts/{postID}/tags:
+    get:
+      summary: Get all tags for a post
+      parameters:
+        - name: postID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tags retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogTag'
+
   /comments:
     post:
       summary: Create a new blog comment
@@ -653,6 +738,162 @@ paths:
         '404':
           description: Comment not found
 
+  /comments/{commentID}/likes:
+    get:
+      summary: Get like information for a comment
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: details
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Like information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  me:
+                    type: boolean
+                  details:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LikeDetail'
+
+    post:
+      summary: Like a comment
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: User ID
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userID:
+                  type: integer
+      responses:
+        '200':
+          description: Comment liked
+
+    delete:
+      summary: Unlike a comment
+      parameters:
+        - name: commentID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment unliked
+
+  /tags:
+    get:
+      summary: Retrieve all tags
+      responses:
+        '200':
+          description: Tags retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogTag'
+    post:
+      summary: Create a new tag
+      requestBody:
+        description: Tag object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogTag'
+      responses:
+        '201':
+          description: Tag created
+
+  /tags/{tagID}:
+    get:
+      summary: Retrieve a specific tag by ID
+      parameters:
+        - name: tagID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tag retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlogTag'
+    put:
+      summary: Update an existing tag
+      parameters:
+        - name: tagID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Tag object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogTag'
+      responses:
+        '200':
+          description: Tag updated
+    delete:
+      summary: Delete a tag by ID
+      parameters:
+        - name: tagID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tag deleted
+
+  /tags/{tagID}/posts:
+    get:
+      summary: Get all posts with a specific tag
+      parameters:
+        - name: tagID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Posts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogPost'
+
 components:
   schemas:
     SysUser:
@@ -662,7 +903,7 @@ components:
           type: integer
         Email:
           type: string
-        EmailConfirmed:
+        EmailVerified:
           type: boolean
         DisplayName:
           type: string
@@ -690,6 +931,7 @@ components:
         CreatedAt:
           type: string
           format: date-time
+
     SysRole:
       type: object
       properties:
@@ -700,6 +942,7 @@ components:
         CreatedAt:
           type: string
           format: date-time
+
     SysSession:
       type: object
       properties:
@@ -712,6 +955,7 @@ components:
         CreatedAt:
           type: string
           format: date-time
+
     BlogCategory:
       type: object
       properties:
@@ -719,6 +963,7 @@ components:
           type: integer
         CategoryName:
           type: string
+
     BlogComment:
       type: object
       properties:
@@ -733,6 +978,7 @@ components:
         CreatedAt:
           type: string
           format: date-time
+
     BlogPost:
       type: object
       properties:
@@ -751,13 +997,42 @@ components:
         CreatedAt:
           type: string
           format: date-time
-    M2mUserRole:
+
+    BlogPostLike:
       type: object
       properties:
-        SysUserID:
+        userID:
           type: integer
-        SysRoleID:
+        postID:
           type: integer
+
+    BlogCommentLike:
+      type: object
+      properties:
+        userID:
+          type: integer
+        commentID:
+          type: integer
+
+    BlogTag:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LikeDetail:
+      type: object
+      properties:
+        userID:
+          type: integer
+        displayName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
     SessionContext:
       type: object
       properties:

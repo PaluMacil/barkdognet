@@ -7,7 +7,12 @@
 
 package model
 
+import (
+	"time"
+)
+
 type BlogTag struct {
 	ID          int32 `sql:"primary_key"`
 	DisplayName string
+	CreatedAt   time.Time
 }

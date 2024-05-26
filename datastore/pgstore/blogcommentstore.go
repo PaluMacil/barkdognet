@@ -56,6 +56,7 @@ func (b BlogCommentStore) SomeForBlogPost(ctx context.Context, blogPostID int32,
 	stmt := SELECT(BlogComment.AllColumns).
 		FROM(BlogComment).
 		WHERE(BlogComment.BlogPostID.EQ(Int32(blogPostID))).
+		ORDER_BY(BlogComment.CreatedAt.ASC()).
 		LIMIT(pageSize).
 		OFFSET(page * pageSize)
 
@@ -76,7 +77,8 @@ func (b BlogCommentStore) AllForBlogPost(ctx context.Context, blogPostID int32) 
 	var comments []model.BlogComment
 	stmt := SELECT(BlogComment.AllColumns).
 		FROM(BlogComment).
-		WHERE(BlogComment.BlogPostID.EQ(Int32(blogPostID)))
+		WHERE(BlogComment.BlogPostID.EQ(Int32(blogPostID))).
+		ORDER_BY(BlogComment.CreatedAt.ASC())
 
 	if b.log.Enabled(ctx, slog.LevelDebug) {
 		b.log.DebugContext(ctx, "AllForBlogPost", slog.String("sql", stmt.DebugSql()))
@@ -96,6 +98,7 @@ func (b BlogCommentStore) SomeForUser(ctx context.Context, userIden identifier.U
 	stmt := SELECT(BlogComment.AllColumns).
 		FROM(BlogComment).
 		WHERE(BlogComment.AuthorID.EQ(Int32(*userIden.ID))).
+		ORDER_BY(BlogComment.CreatedAt.ASC()).
 		LIMIT(pageSize).
 		OFFSET(page * pageSize)
 

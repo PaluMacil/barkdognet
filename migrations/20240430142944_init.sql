@@ -149,7 +149,9 @@ CREATE INDEX idx_blog_comment_like_comment_id ON public.blog_comment_like (comme
 create table public.blog_tag
 (
     id           integer generated always as identity primary key,
-    display_name varchar(50) not null
+    display_name varchar(50) not null,
+    created_at   TIMESTAMP WITH TIME ZONE
+        DEFAULT now()     NOT NULL
 );
 
 create table public.m2m_blog_post_tag

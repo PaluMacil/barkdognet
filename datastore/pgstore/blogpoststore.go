@@ -32,6 +32,11 @@ func (b BlogPostStore) Get(ctx context.Context, id int32) (*model.BlogPost, erro
 	stmt := SELECT(BlogPost.AllColumns).
 		FROM(BlogPost).
 		WHERE(BlogPost.ID.EQ(Int32(id)))
+
+	if b.log.Enabled(ctx, slog.LevelDebug) {
+		b.log.DebugContext(ctx, "Get", slog.String("sql", stmt.DebugSql()), slog.Int("id", int(id)))
+	}
+
 	err := stmt.QueryContext(ctx, b.db, &blogPost)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -53,11 +58,36 @@ func (b BlogPostStore) Some(ctx context.Context, categoryID *int32, page, pageSi
 	if categoryID != nil {
 		stmt = stmt.WHERE(BlogPost.CategoryID.EQ(Int32(*categoryID)))
 	}
+
+	if b.log.Enabled(ctx, slog.LevelDebug) {
+		b.log.DebugContext(ctx, "Some", slog.String("sql", stmt.DebugSql()))
+	}
+
 	err := stmt.QueryContext(ctx, b.db, &blogPosts)
 	if err != nil {
 		return nil, fmt.Errorf("getting some Blog Posts: %w", err)
 	}
 	return blogPosts, nil
+}
+
+func (b BlogPostStore) GetTags(ctx context.Context, postID int32) ([]model.BlogTag, error) {
+	var tags []model.BlogTag
+	stmt := SELECT(BlogTag.AllColumns).
+		FROM(BlogTag.
+			INNER_JOIN(M2mBlogPostTag, BlogTag.ID.EQ(M2mBlogPostTag.TagID))).
+		WHERE(M2mBlogPostTag.BlogPostID.EQ(Int32(postID)))
+
+	if b.log.Enabled(ctx, slog.LevelDebug) {
+		b.log.DebugContext(ctx, "GetTags", slog.String("sql", stmt.DebugSql()), slog.Int("postID", int(postID)))
+	}
+
+	err := stmt.QueryContext(ctx, b.db, &tags)
+	if err != nil {
+		b.log.ErrorContext(ctx, "GetTags", slog.Int("postID", int(postID)), slog.String("err", err.Error()))
+		return nil, fmt.Errorf("getting tags for post %d: %w", postID, err)
+	}
+
+	return tags, nil
 }
 
 func (b BlogPostStore) All(ctx context.Context, categoryID *int32) ([]model.BlogPost, error) {
@@ -68,6 +98,11 @@ func (b BlogPostStore) All(ctx context.Context, categoryID *int32) ([]model.Blog
 	if categoryID != nil {
 		stmt = stmt.WHERE(BlogPost.CategoryID.EQ(Int32(*categoryID)))
 	}
+
+	if b.log.Enabled(ctx, slog.LevelDebug) {
+		b.log.DebugContext(ctx, "All", slog.String("sql", stmt.DebugSql()))
+	}
+
 	err := stmt.QueryContext(ctx, b.db, &blogPosts)
 	if err != nil {
 		return nil, fmt.Errorf("getting All Blog Posts: %w", err)
@@ -107,6 +142,11 @@ func (b BlogPostStore) Update(ctx context.Context, blogPost *model.BlogPost) err
 
 func (b BlogPostStore) Delete(ctx context.Context, id int32) error {
 	stmt := BlogPost.DELETE().WHERE(BlogPost.ID.EQ(Int32(id)))
+
+	if b.log.Enabled(ctx, slog.LevelDebug) {
+		b.log.DebugContext(ctx, "Delete", slog.String("sql", stmt.DebugSql()), slog.Int("id", int(id)))
+	}
+
 	_, err := stmt.ExecContext(ctx, b.db)
 	if err != nil {
 		return fmt.Errorf("deleting blog post: %w", err)

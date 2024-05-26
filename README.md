@@ -47,7 +47,9 @@ Otherwise, set a password:
 ```sql
 ALTER USER barkadmin WITH PASSWORD 'localdevpw';
 ```
-You will need to specify the password in [barkconf.yaml](barkconf.yaml) or 
+You will need to specify the password in [barkconf.yaml](barkconf.yaml) or in env var `BARKDOG_DATABASE_PASSWORD`.
+
+If using Windows and WSL2, if you install Postgres on the Windows side, you should run configure the host in the config or set this env var: `BARKDOG_DATABASE_HOST=host.docker.internal` inside WSL2.
 
 ## Codegen
 
