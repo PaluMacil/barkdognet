@@ -162,6 +162,52 @@ create table public.m2m_blog_post_tag
     FOREIGN KEY (blog_post_id) REFERENCES public.blog_post (id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES public.blog_tag (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE public.oidc_provider (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    display_name VARCHAR(255) NOT NULL,
+    issuer_url VARCHAR(255) NOT NULL,
+    discovery_url VARCHAR(255) NOT NULL,
+    scopes TEXT[] NOT NULL DEFAULT ARRAY['oidc', 'profile', 'email'],
+    client_id VARCHAR(255) NOT NULL,
+    client_secret VARCHAR(255) NOT NULL,
+    redirect_url VARCHAR(255) NOT NULL,
+    access_type VARCHAR(50) NOT NULL,
+    azure_tenant_id VARCHAR(100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+);
+
+CREATE TABLE public.user_oidc (
+    sys_user_id INTEGER NOT NULL,
+    oidc_provider_id INTEGER NOT NULL,
+    sub VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    PRIMARY KEY (sys_user_id, oidc_provider_id),
+    FOREIGN KEY (sys_user_id) REFERENCES public.sys_user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (oidc_provider_id) REFERENCES public.oidc_provider (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX idx_user_oidc_sys_user_id ON public.user_oidc (sys_user_id);
+CREATE INDEX idx_user_oidc_oidc_provider_id ON public.user_oidc (oidc_provider_id);
+CREATE INDEX idx_user_oidc_sub ON public.user_oidc (sub);
+
+CREATE TABLE public.invitation (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    inviter_id INTEGER NOT NULL,
+    invitee_email VARCHAR(100) NOT NULL,
+    invitation_code UUID NOT NULL DEFAULT gen_random_uuid(),
+    pending BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE DEFAULT (now() + interval '30 days') NOT NULL,
+    accepted_at TIMESTAMP WITH TIME ZONE,
+    FOREIGN KEY (inviter_id) REFERENCES public.sys_user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE (invitation_code)
+);
+CREATE INDEX idx_invitations_invitee_email ON public.invitation (invitee_email);
+CREATE INDEX idx_invitations_pending ON public.invitation (pending);
+CREATE INDEX idx_invitations_created_at ON public.invitation (created_at);
+
+
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin

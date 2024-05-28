@@ -17,9 +17,12 @@ func UseSchema(schema string) {
 	BlogPostLike = BlogPostLike.FromSchema(schema)
 	BlogTag = BlogTag.FromSchema(schema)
 	GooseDbVersion = GooseDbVersion.FromSchema(schema)
+	Invitation = Invitation.FromSchema(schema)
 	M2mBlogPostTag = M2mBlogPostTag.FromSchema(schema)
 	M2mUserRole = M2mUserRole.FromSchema(schema)
+	OidcProvider = OidcProvider.FromSchema(schema)
 	SysRole = SysRole.FromSchema(schema)
 	SysSession = SysSession.FromSchema(schema)
 	SysUser = SysUser.FromSchema(schema)
+	UserOidc = UserOidc.FromSchema(schema)
 }
