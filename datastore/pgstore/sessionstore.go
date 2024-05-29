@@ -8,7 +8,8 @@ import (
 	"github.com/PaluMacil/barkdognet/.gen/barkdog/public/model"
 	. "github.com/PaluMacil/barkdognet/.gen/barkdog/public/table"
 	"github.com/PaluMacil/barkdognet/datastore"
-	"github.com/PaluMacil/barkdognet/datastore/identifier"
+	"github.com/PaluMacil/barkdognet/datastore/aggregates"
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"log/slog"
@@ -28,8 +29,8 @@ func NewSessionStore(db *sql.DB, log *slog.Logger) *SessionStore {
 	}
 }
 
-func (s SessionStore) GetContext(ctx context.Context, iden identifier.Session) (identifier.SessionContext, error) {
-	sessionContext := identifier.SessionContext{}
+func (s SessionStore) GetContext(ctx context.Context, iden types.SessionIdentifier) (aggregates.SessionDetails, error) {
+	sessionContext := aggregates.SessionDetails{}
 	stmt := SELECT(SysSession.AllColumns, SysUser.AllColumns, SysRole.AllColumns).
 		FROM(SysSession.INNER_JOIN(SysUser, SysSession.SysUserID.EQ(SysUser.ID)).
 			INNER_JOIN(M2mUserRole, SysUser.ID.EQ(M2mUserRole.SysUserID)).
@@ -44,16 +45,16 @@ func (s SessionStore) GetContext(ctx context.Context, iden identifier.Session) (
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			s.log.InfoContext(ctx, "GetContext, not found", iden.Slog())
-			return identifier.SessionContext{}, nil
+			return aggregates.SessionDetails{}, nil
 		}
 		s.log.ErrorContext(ctx, "GetContext", slog.String("err", err.Error()))
-		return identifier.SessionContext{}, fmt.Errorf("error getting session context for token %s: %w", iden.Token, err)
+		return aggregates.SessionDetails{}, fmt.Errorf("error getting session context for token %s: %w", iden.Token, err)
 	}
 
 	return sessionContext, nil
 }
 
-func (s SessionStore) Get(ctx context.Context, iden identifier.Session) (*model.SysSession, error) {
+func (s SessionStore) Get(ctx context.Context, iden types.SessionIdentifier) (*model.SysSession, error) {
 	var session model.SysSession
 	stmt := SELECT(SysSession.AllColumns).FROM(SysSession)
 	if iden.ID != nil {
@@ -61,7 +62,7 @@ func (s SessionStore) Get(ctx context.Context, iden identifier.Session) (*model.
 	} else if iden.Token != nil {
 		stmt = stmt.WHERE(SysSession.SessionToken.EQ(String(*iden.Token)))
 	} else {
-		return nil, identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return nil, types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 
 	if s.log.Enabled(ctx, slog.LevelDebug) {
@@ -97,14 +98,14 @@ func (s SessionStore) Create(ctx context.Context, session *model.SysSession) err
 	return nil
 }
 
-func (s SessionStore) Delete(ctx context.Context, iden identifier.Session) error {
+func (s SessionStore) Delete(ctx context.Context, iden types.SessionIdentifier) error {
 	stmt := SysSession.DELETE()
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysSession.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Token != nil {
 		stmt = stmt.WHERE(SysSession.SessionToken.EQ(String(*iden.Token)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 
 	if s.log.Enabled(ctx, slog.LevelDebug) {

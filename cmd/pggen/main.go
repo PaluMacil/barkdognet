@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	"github.com/go-jet/jet/v2/generator/metadata"
 	"github.com/go-jet/jet/v2/generator/postgres"
 	"github.com/go-jet/jet/v2/generator/template"
@@ -33,7 +34,12 @@ func main() {
 						UseTable(func(table metadata.Table) template.TableModel {
 							return template.DefaultTableModel(table).
 								UseField(func(column metadata.Column) template.TableModelField {
-									return template.DefaultTableModelField(column)
+									defaultTableModelField := template.DefaultTableModelField(column)
+
+									if column.DataType.Name == "text[]" {
+										defaultTableModelField.Type = template.NewType(types.TextArray{})
+									}
+									return defaultTableModelField
 								})
 						}),
 					)

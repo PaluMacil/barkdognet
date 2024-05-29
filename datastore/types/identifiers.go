@@ -1,4 +1,4 @@
-package identifier
+package types
 
 import (
 	"fmt"
@@ -13,12 +13,12 @@ func (ei ErrInsufficient) Error() string {
 	return fmt.Sprintf("insufficient identity specified: %s", ei.IdentString)
 }
 
-type User struct {
+type UserIdentifier struct {
 	ID    *int32
 	Email *string
 }
 
-func (i User) Slog() slog.Attr {
+func (i UserIdentifier) Slog() slog.Attr {
 	if i.ID != nil {
 		return slog.Int("Identifier", int(*i.ID))
 	}
@@ -28,12 +28,12 @@ func (i User) Slog() slog.Attr {
 	return slog.String("Identifier", "None Specified")
 }
 
-type Session struct {
+type SessionIdentifier struct {
 	ID    *int32
 	Token *string
 }
 
-func (i Session) Slog() slog.Attr {
+func (i SessionIdentifier) Slog() slog.Attr {
 	if i.ID != nil {
 		return slog.Int("ID", int(*i.ID))
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/PaluMacil/barkdognet/.gen/barkdog/public/model"
 	. "github.com/PaluMacil/barkdognet/.gen/barkdog/public/table"
 	"github.com/PaluMacil/barkdognet/datastore"
-	"github.com/PaluMacil/barkdognet/datastore/identifier"
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"log/slog"
@@ -51,7 +51,7 @@ func (r RoleStore) Get(ctx context.Context, id int32) (*model.SysRole, error) {
 	return role, nil
 }
 
-func (r RoleStore) Some(ctx context.Context, iden identifier.User) ([]model.SysRole, error) {
+func (r RoleStore) Some(ctx context.Context, iden types.UserIdentifier) ([]model.SysRole, error) {
 	var roles []model.SysRole
 	stmt := SELECT(SysRole.AllColumns).
 		FROM(SysRole.
@@ -64,7 +64,7 @@ func (r RoleStore) Some(ctx context.Context, iden identifier.User) ([]model.SysR
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.DisplayName.EQ(String(*iden.Email)))
 	} else {
-		return nil, identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return nil, types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if r.log.Enabled(ctx, slog.LevelDebug) {
 		r.log.DebugContext(ctx, "Some", slog.String("sql", stmt.DebugSql()), iden.Slog())
@@ -123,11 +123,11 @@ func (r RoleStore) Create(ctx context.Context, role *model.SysRole) error {
 	return nil
 }
 
-func (r RoleStore) AddUser(ctx context.Context, roleID int32, userIden identifier.User) error {
+func (r RoleStore) AddUser(ctx context.Context, roleID int32, userIden types.UserIdentifier) error {
 	if userIden.ID == nil {
 		if userIden.Email == nil {
 			id := fmt.Sprintf("roleID %d, user %s", roleID, userIden.Slog().String())
-			return identifier.ErrInsufficient{IdentString: id}
+			return types.ErrInsufficient{IdentString: id}
 		}
 		stmt2 := SELECT(SysUser.ID).
 			FROM(SysUser).
@@ -146,12 +146,12 @@ func (r RoleStore) AddUser(ctx context.Context, roleID int32, userIden identifie
 	return nil
 }
 
-func (r RoleStore) RemoveUser(ctx context.Context, roleID int32, userIden identifier.User) error {
+func (r RoleStore) RemoveUser(ctx context.Context, roleID int32, userIden types.UserIdentifier) error {
 
 	if userIden.ID == nil {
 		if userIden.Email == nil {
 			id := fmt.Sprintf("roleID %d, user %s", roleID, userIden.Slog().String())
-			return identifier.ErrInsufficient{IdentString: id}
+			return types.ErrInsufficient{IdentString: id}
 		}
 		stmt2 := SELECT(SysUser.ID).
 			FROM(SysUser).

@@ -8,7 +8,7 @@ import (
 	"github.com/PaluMacil/barkdognet/.gen/barkdog/public/model"
 	. "github.com/PaluMacil/barkdognet/.gen/barkdog/public/table"
 	"github.com/PaluMacil/barkdognet/datastore"
-	"github.com/PaluMacil/barkdognet/datastore/identifier"
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/crypto/bcrypt"
@@ -33,7 +33,7 @@ func NewUserStore(db *stdsql.DB, log *slog.Logger) *UserStore {
 }
 
 // GetUser retrieves a user from the database using their identifier.
-func (u UserStore) GetUser(ctx context.Context, iden identifier.User) (*model.SysUser, error) {
+func (u UserStore) GetUser(ctx context.Context, iden types.UserIdentifier) (*model.SysUser, error) {
 	var user *model.SysUser
 	stmt := SELECT(SysUser.AllColumns).FROM(SysUser)
 	if iden.ID != nil {
@@ -41,7 +41,7 @@ func (u UserStore) GetUser(ctx context.Context, iden identifier.User) (*model.Sy
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return nil, identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return nil, types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "GetUser", slog.String("sql", stmt.DebugSql()), iden.Slog())
@@ -80,7 +80,7 @@ func (u UserStore) GetUsersForRole(ctx context.Context, roleID int32) ([]model.S
 }
 
 // SetPassword sets the password of a user identified by their identifier.
-func (u UserStore) SetPassword(ctx context.Context, iden identifier.User, password string) error {
+func (u UserStore) SetPassword(ctx context.Context, iden types.UserIdentifier, password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		u.log.ErrorContext(ctx, "SetPassword, hash generation", slog.String("err", err.Error()))
@@ -92,7 +92,7 @@ func (u UserStore) SetPassword(ctx context.Context, iden identifier.User, passwo
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "SetPassword", iden.Slog(), slog.String("sql", stmt.DebugSql()))
@@ -106,14 +106,14 @@ func (u UserStore) SetPassword(ctx context.Context, iden identifier.User, passwo
 }
 
 // CheckPassword checks whether the provided password matches the stored one for a particular user.
-func (u UserStore) CheckPassword(ctx context.Context, iden identifier.User, password string) error {
+func (u UserStore) CheckPassword(ctx context.Context, iden types.UserIdentifier, password string) error {
 	stmt := SELECT(SysUser.PasswordHash).FROM(SysUser)
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysUser.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "CheckPassword", slog.String("sql", stmt.DebugSql()), iden.Slog())
@@ -131,7 +131,7 @@ func (u UserStore) CheckPassword(ctx context.Context, iden identifier.User, pass
 	return nil
 }
 
-// Update updates a User in the database
+// Update updates a UserIdentifier in the database
 func (u UserStore) Update(ctx context.Context, user *model.SysUser) error {
 	stmt := SysUser.UPDATE(SysUser.MutableColumns.Except(SysUser.CreatedAt)).
 		MODEL(user).
@@ -165,14 +165,14 @@ func (u UserStore) Create(ctx context.Context, user *model.SysUser) error {
 }
 
 // Lock locks a user account. This can be useful in case the user made several invalid login attempts.
-func (u UserStore) Lock(ctx context.Context, iden identifier.User) error {
+func (u UserStore) Lock(ctx context.Context, iden types.UserIdentifier) error {
 	stmt := SysUser.UPDATE(SysUser.Locked).SET(true)
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysUser.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "Lock", iden.Slog(), slog.String("sql", stmt.DebugSql()))
@@ -186,14 +186,14 @@ func (u UserStore) Lock(ctx context.Context, iden identifier.User) error {
 }
 
 // UnLock unlocks a user account that has been locked previously.
-func (u UserStore) UnLock(ctx context.Context, iden identifier.User) error {
+func (u UserStore) UnLock(ctx context.Context, iden types.UserIdentifier) error {
 	stmt := SysUser.UPDATE(SysUser.Locked).SET(false)
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysUser.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "UnLock", iden.Slog(), slog.String("sql", stmt.DebugSql()))
@@ -227,14 +227,14 @@ func (u UserStore) All(ctx context.Context, orderBy ...OrderByClause) ([]model.S
 }
 
 // Delete deletes a user account from the system.
-func (u UserStore) Delete(ctx context.Context, iden identifier.User) error {
+func (u UserStore) Delete(ctx context.Context, iden types.UserIdentifier) error {
 	stmt := SysUser.DELETE()
 	if iden.ID != nil {
 		stmt = stmt.WHERE(SysUser.ID.EQ(Int32(*iden.ID)))
 	} else if iden.Email != nil {
 		stmt = stmt.WHERE(SysUser.Email.EQ(String(*iden.Email)))
 	} else {
-		return identifier.ErrInsufficient{IdentString: iden.Slog().String()}
+		return types.ErrInsufficient{IdentString: iden.Slog().String()}
 	}
 	if u.log.Enabled(ctx, slog.LevelDebug) {
 		u.log.DebugContext(ctx, "Delete", iden.Slog(), slog.String("sql", stmt.DebugSql()))

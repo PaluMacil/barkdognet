@@ -8,7 +8,7 @@ import (
 	"github.com/PaluMacil/barkdognet/.gen/barkdog/public/model"
 	. "github.com/PaluMacil/barkdognet/.gen/barkdog/public/table"
 	"github.com/PaluMacil/barkdognet/datastore"
-	"github.com/PaluMacil/barkdognet/datastore/identifier"
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"log/slog"
@@ -93,7 +93,7 @@ func (b BlogCommentStore) AllForBlogPost(ctx context.Context, blogPostID int32) 
 	return comments, nil
 }
 
-func (b BlogCommentStore) SomeForUser(ctx context.Context, userIden identifier.User, page, pageSize int64) ([]model.BlogComment, error) {
+func (b BlogCommentStore) SomeForUser(ctx context.Context, userIden types.UserIdentifier, page, pageSize int64) ([]model.BlogComment, error) {
 	var comments []model.BlogComment
 	stmt := SELECT(BlogComment.AllColumns).
 		FROM(BlogComment).

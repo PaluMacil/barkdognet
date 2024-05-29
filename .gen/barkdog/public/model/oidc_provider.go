@@ -8,6 +8,7 @@
 package model
 
 import (
+	"github.com/PaluMacil/barkdognet/datastore/types"
 	"time"
 )
 
@@ -16,7 +17,7 @@ type OidcProvider struct {
 	DisplayName   string
 	IssuerURL     string
 	DiscoveryURL  string
-	Scopes        string
+	Scopes        types.TextArray
 	ClientID      string
 	ClientSecret  string
 	RedirectURL   string

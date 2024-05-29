@@ -20,6 +20,7 @@ brew install go-task
 ## Database
 
 On Linux or Mac, `task resetdb` can do this.
+
 ```sql
 CREATE DATABASE barkdog;
 CREATE USER barkadmin LOGIN;
@@ -27,6 +28,7 @@ ALTER DATABASE barkdog OWNER TO barkadmin;
 ```
 
 You can use the database with no password if this fits your security posture:
+
 - Set the connection to trust (find pg_hba.conf with `SHOW hba_file;` using an admin)
 - Restart Postgres
   - Win:
@@ -42,11 +44,13 @@ You can use the database with no password if this fits your security posture:
   ```
   sudo systemctl restart postgresql
   ```
-  
+
 Otherwise, set a password:
+
 ```sql
 ALTER USER barkadmin WITH PASSWORD 'localdevpw';
 ```
+
 You will need to specify the password in [barkconf.yaml](barkconf.yaml) or in env var `BARKDOG_DATABASE_PASSWORD`.
 
 If using Windows and WSL2, if you install Postgres on the Windows side, you should run configure the host in the config or set this env var: `BARKDOG_DATABASE_HOST=host.docker.internal` inside WSL2.
