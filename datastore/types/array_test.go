@@ -43,7 +43,7 @@ func TestTextArray_Value(t *testing.T) {
 		want    driver.Value
 		wantErr bool
 	}{
-		{"text array with two values", types.TextArray{"hello", "world"}, "{hello,world}", false},
+		{"text array with two values", types.TextArray{"hello", "world"}, `{"hello","world"}`, false},
 		{"empty text array", types.TextArray{}, "{}", false},
 	}
 	for _, tt := range tests {

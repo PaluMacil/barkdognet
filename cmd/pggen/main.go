@@ -1,7 +1,12 @@
+// Package main provides a customized Jet codegen tool for generating models from the live
+// application database in a database first approach. This means that the migration should
+// run before this codegen runs. Database connection values come from the default config
+// provider, and customizations to the codegen can be made here.
 package main
 
 import (
 	"database/sql"
+	"github.com/PaluMacil/barkdognet/configuration"
 	"github.com/PaluMacil/barkdognet/datastore/types"
 	"github.com/go-jet/jet/v2/generator/metadata"
 	"github.com/go-jet/jet/v2/generator/postgres"
@@ -17,14 +22,19 @@ func init() {
 }
 
 func main() {
-	err := postgres.Generate("./.gen",
+	configProvider := configuration.DefaultProvider{}
+	config, err := configProvider.Config()
+	if err != nil {
+		log.Fatalf("getting config: %v", err)
+	}
+	err = postgres.Generate("./.gen",
 		postgres.DBConnection{
-			Host:       "localhost",
-			Port:       5432,
-			User:       "barkadmin",
-			Password:   "",
+			Host:       config.Database.Host,
+			Port:       config.Database.PortInt(),
+			User:       config.Database.User,
+			Password:   config.Database.Password,
 			SslMode:    "disable",
-			DBName:     "barkdog",
+			DBName:     config.Database.Database,
 			SchemaName: "public",
 		},
 		template.Default(pgdialect.Dialect).

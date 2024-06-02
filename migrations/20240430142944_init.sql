@@ -1,6 +1,23 @@
 -- +goose Up
 -- +goose StatementBegin
 SELECT 'up SQL query';
+
+CREATE TABLE public.sys_tenant
+(
+    id INTEGER GENERATED ALWAYS AS IDENTITY
+        CONSTRAINT sys_tenant_pk
+            PRIMARY KEY,
+    display_name VARCHAR(255) NOT NULL,
+    api_subdomain VARCHAR(255) NOT NULL,
+    ui_domain VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    active BOOLEAN DEFAULT true NOT NULL
+);
+
+COMMENT ON COLUMN public.sys_tenant.api_subdomain IS 'The domain where the API is hosted.';
+COMMENT ON COLUMN public.sys_tenant.ui_domain IS 'The domain where the UI is hosted. Can be null if API and UI are hosted together.';
+COMMENT ON COLUMN public.sys_tenant.active IS 'Flag to indicate whether the tenant is active or inactive.';
+
 create table public.sys_user
 (
     id                                integer generated always as identity
@@ -174,6 +191,7 @@ CREATE TABLE public.oidc_provider (
     redirect_url VARCHAR(255) NOT NULL,
     access_type VARCHAR(50) NOT NULL,
     azure_tenant_id VARCHAR(100),
+    active BOOLEAN DEFAULT true NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );
 

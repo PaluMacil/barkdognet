@@ -3,6 +3,7 @@ package configuration
 import (
 	"cmp"
 	"fmt"
+	"strconv"
 )
 
 type Database struct {
@@ -22,4 +23,9 @@ func (dbc *Database) ConnectionString() string {
 	database := cmp.Or(dbc.Database, "barkdog")
 
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, database)
+}
+
+func (dbc *Database) PortInt() int {
+	i, _ := strconv.Atoi(dbc.Port)
+	return i
 }

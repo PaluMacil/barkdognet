@@ -33,10 +33,14 @@ func (ta *TextArray) Scan(value interface{}) error {
 }
 
 func (ta TextArray) Value() (driver.Value, error) {
-	if ta == nil {
+	if ta == nil || len(ta) == 0 {
 		return "{}", nil
 	}
-	return "{" + strings.Join(ta, ",") + "}", nil
+	quoted := make([]string, len(ta))
+	for i, s := range ta {
+		quoted[i] = fmt.Sprintf("\"%s\"", s)
+	}
+	return "{" + strings.Join(quoted, ",") + "}", nil
 }
 
 type IntArray []int32
