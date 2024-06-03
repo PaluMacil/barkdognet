@@ -19,6 +19,7 @@ type blogCategoryTable struct {
 	// Columns
 	ID           postgres.ColumnInteger
 	CategoryName postgres.ColumnString
+	TenantID     postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -61,8 +62,9 @@ func newBlogCategoryTableImpl(schemaName, tableName, alias string) blogCategoryT
 	var (
 		IDColumn           = postgres.IntegerColumn("id")
 		CategoryNameColumn = postgres.StringColumn("category_name")
-		allColumns         = postgres.ColumnList{IDColumn, CategoryNameColumn}
-		mutableColumns     = postgres.ColumnList{CategoryNameColumn}
+		TenantIDColumn     = postgres.IntegerColumn("tenant_id")
+		allColumns         = postgres.ColumnList{IDColumn, CategoryNameColumn, TenantIDColumn}
+		mutableColumns     = postgres.ColumnList{CategoryNameColumn, TenantIDColumn}
 	)
 
 	return blogCategoryTable{
@@ -71,6 +73,7 @@ func newBlogCategoryTableImpl(schemaName, tableName, alias string) blogCategoryT
 		//Columns
 		ID:           IDColumn,
 		CategoryName: CategoryNameColumn,
+		TenantID:     TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

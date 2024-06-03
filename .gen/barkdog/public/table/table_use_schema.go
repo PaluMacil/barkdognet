@@ -23,6 +23,7 @@ func UseSchema(schema string) {
 	OidcProvider = OidcProvider.FromSchema(schema)
 	SysRole = SysRole.FromSchema(schema)
 	SysSession = SysSession.FromSchema(schema)
+	SysTenant = SysTenant.FromSchema(schema)
 	SysUser = SysUser.FromSchema(schema)
 	UserOidc = UserOidc.FromSchema(schema)
 }

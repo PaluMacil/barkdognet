@@ -23,5 +23,7 @@ type OidcProvider struct {
 	RedirectURL   string
 	AccessType    string
 	AzureTenantID *string
+	Active        bool
 	CreatedAt     time.Time
+	TenantID      int32
 }

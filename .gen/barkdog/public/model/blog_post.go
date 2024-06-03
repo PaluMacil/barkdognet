@@ -22,4 +22,5 @@ type BlogPost struct {
 	Body       string
 	AuthorID   int32
 	CreatedAt  time.Time
+	TenantID   int32
 }

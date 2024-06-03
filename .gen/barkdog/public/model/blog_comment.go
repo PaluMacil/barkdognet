@@ -18,4 +18,5 @@ type BlogComment struct {
 	Body       string
 	Status     CommentStatus
 	CreatedAt  time.Time
+	TenantID   int32
 }

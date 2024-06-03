@@ -27,6 +27,7 @@ type blogPostTable struct {
 	Body       postgres.ColumnString
 	AuthorID   postgres.ColumnInteger
 	CreatedAt  postgres.ColumnTimestampz
+	TenantID   postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -77,8 +78,9 @@ func newBlogPostTableImpl(schemaName, tableName, alias string) blogPostTable {
 		BodyColumn       = postgres.StringColumn("body")
 		AuthorIDColumn   = postgres.IntegerColumn("author_id")
 		CreatedAtColumn  = postgres.TimestampzColumn("created_at")
-		allColumns       = postgres.ColumnList{IDColumn, CategoryIDColumn, TitleColumn, SlugColumn, SummaryColumn, StatusColumn, KeywordsColumn, BodyColumn, AuthorIDColumn, CreatedAtColumn}
-		mutableColumns   = postgres.ColumnList{CategoryIDColumn, TitleColumn, SlugColumn, SummaryColumn, StatusColumn, KeywordsColumn, BodyColumn, AuthorIDColumn, CreatedAtColumn}
+		TenantIDColumn   = postgres.IntegerColumn("tenant_id")
+		allColumns       = postgres.ColumnList{IDColumn, CategoryIDColumn, TitleColumn, SlugColumn, SummaryColumn, StatusColumn, KeywordsColumn, BodyColumn, AuthorIDColumn, CreatedAtColumn, TenantIDColumn}
+		mutableColumns   = postgres.ColumnList{CategoryIDColumn, TitleColumn, SlugColumn, SummaryColumn, StatusColumn, KeywordsColumn, BodyColumn, AuthorIDColumn, CreatedAtColumn, TenantIDColumn}
 	)
 
 	return blogPostTable{
@@ -95,6 +97,7 @@ func newBlogPostTableImpl(schemaName, tableName, alias string) blogPostTable {
 		Body:       BodyColumn,
 		AuthorID:   AuthorIDColumn,
 		CreatedAt:  CreatedAtColumn,
+		TenantID:   TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

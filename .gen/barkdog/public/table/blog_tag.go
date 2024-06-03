@@ -20,6 +20,7 @@ type blogTagTable struct {
 	ID          postgres.ColumnInteger
 	DisplayName postgres.ColumnString
 	CreatedAt   postgres.ColumnTimestampz
+	TenantID    postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -63,8 +64,9 @@ func newBlogTagTableImpl(schemaName, tableName, alias string) blogTagTable {
 		IDColumn          = postgres.IntegerColumn("id")
 		DisplayNameColumn = postgres.StringColumn("display_name")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
-		allColumns        = postgres.ColumnList{IDColumn, DisplayNameColumn, CreatedAtColumn}
-		mutableColumns    = postgres.ColumnList{DisplayNameColumn, CreatedAtColumn}
+		TenantIDColumn    = postgres.IntegerColumn("tenant_id")
+		allColumns        = postgres.ColumnList{IDColumn, DisplayNameColumn, CreatedAtColumn, TenantIDColumn}
+		mutableColumns    = postgres.ColumnList{DisplayNameColumn, CreatedAtColumn, TenantIDColumn}
 	)
 
 	return blogTagTable{
@@ -74,6 +76,7 @@ func newBlogTagTableImpl(schemaName, tableName, alias string) blogTagTable {
 		ID:          IDColumn,
 		DisplayName: DisplayNameColumn,
 		CreatedAt:   CreatedAtColumn,
+		TenantID:    TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

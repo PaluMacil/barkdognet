@@ -25,6 +25,7 @@ type invitationTable struct {
 	CreatedAt      postgres.ColumnTimestampz
 	ExpiresAt      postgres.ColumnTimestampz
 	AcceptedAt     postgres.ColumnTimestampz
+	TenantID       postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -73,8 +74,9 @@ func newInvitationTableImpl(schemaName, tableName, alias string) invitationTable
 		CreatedAtColumn      = postgres.TimestampzColumn("created_at")
 		ExpiresAtColumn      = postgres.TimestampzColumn("expires_at")
 		AcceptedAtColumn     = postgres.TimestampzColumn("accepted_at")
-		allColumns           = postgres.ColumnList{IDColumn, InviterIDColumn, InviteeEmailColumn, InvitationCodeColumn, PendingColumn, CreatedAtColumn, ExpiresAtColumn, AcceptedAtColumn}
-		mutableColumns       = postgres.ColumnList{InviterIDColumn, InviteeEmailColumn, InvitationCodeColumn, PendingColumn, CreatedAtColumn, ExpiresAtColumn, AcceptedAtColumn}
+		TenantIDColumn       = postgres.IntegerColumn("tenant_id")
+		allColumns           = postgres.ColumnList{IDColumn, InviterIDColumn, InviteeEmailColumn, InvitationCodeColumn, PendingColumn, CreatedAtColumn, ExpiresAtColumn, AcceptedAtColumn, TenantIDColumn}
+		mutableColumns       = postgres.ColumnList{InviterIDColumn, InviteeEmailColumn, InvitationCodeColumn, PendingColumn, CreatedAtColumn, ExpiresAtColumn, AcceptedAtColumn, TenantIDColumn}
 	)
 
 	return invitationTable{
@@ -89,6 +91,7 @@ func newInvitationTableImpl(schemaName, tableName, alias string) invitationTable
 		CreatedAt:      CreatedAtColumn,
 		ExpiresAt:      ExpiresAtColumn,
 		AcceptedAt:     AcceptedAtColumn,
+		TenantID:       TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

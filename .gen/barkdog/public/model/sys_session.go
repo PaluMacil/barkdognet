@@ -18,4 +18,5 @@ type SysSession struct {
 	CreatedAt    time.Time
 	IPAddress    string
 	UserAgent    string
+	TenantID     int32
 }

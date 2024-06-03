@@ -27,7 +27,9 @@ type oidcProviderTable struct {
 	RedirectURL   postgres.ColumnString
 	AccessType    postgres.ColumnString
 	AzureTenantID postgres.ColumnString
+	Active        postgres.ColumnBool
 	CreatedAt     postgres.ColumnTimestampz
+	TenantID      postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -78,9 +80,11 @@ func newOidcProviderTableImpl(schemaName, tableName, alias string) oidcProviderT
 		RedirectURLColumn   = postgres.StringColumn("redirect_url")
 		AccessTypeColumn    = postgres.StringColumn("access_type")
 		AzureTenantIDColumn = postgres.StringColumn("azure_tenant_id")
+		ActiveColumn        = postgres.BoolColumn("active")
 		CreatedAtColumn     = postgres.TimestampzColumn("created_at")
-		allColumns          = postgres.ColumnList{IDColumn, DisplayNameColumn, IssuerURLColumn, DiscoveryURLColumn, ScopesColumn, ClientIDColumn, ClientSecretColumn, RedirectURLColumn, AccessTypeColumn, AzureTenantIDColumn, CreatedAtColumn}
-		mutableColumns      = postgres.ColumnList{DisplayNameColumn, IssuerURLColumn, DiscoveryURLColumn, ScopesColumn, ClientIDColumn, ClientSecretColumn, RedirectURLColumn, AccessTypeColumn, AzureTenantIDColumn, CreatedAtColumn}
+		TenantIDColumn      = postgres.IntegerColumn("tenant_id")
+		allColumns          = postgres.ColumnList{IDColumn, DisplayNameColumn, IssuerURLColumn, DiscoveryURLColumn, ScopesColumn, ClientIDColumn, ClientSecretColumn, RedirectURLColumn, AccessTypeColumn, AzureTenantIDColumn, ActiveColumn, CreatedAtColumn, TenantIDColumn}
+		mutableColumns      = postgres.ColumnList{DisplayNameColumn, IssuerURLColumn, DiscoveryURLColumn, ScopesColumn, ClientIDColumn, ClientSecretColumn, RedirectURLColumn, AccessTypeColumn, AzureTenantIDColumn, ActiveColumn, CreatedAtColumn, TenantIDColumn}
 	)
 
 	return oidcProviderTable{
@@ -97,7 +101,9 @@ func newOidcProviderTableImpl(schemaName, tableName, alias string) oidcProviderT
 		RedirectURL:   RedirectURLColumn,
 		AccessType:    AccessTypeColumn,
 		AzureTenantID: AzureTenantIDColumn,
+		Active:        ActiveColumn,
 		CreatedAt:     CreatedAtColumn,
+		TenantID:      TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -11,9 +11,11 @@ import (
 	"time"
 )
 
-type BlogTag struct {
-	ID          int32 `sql:"primary_key"`
-	DisplayName string
-	CreatedAt   time.Time
-	TenantID    int32
+type SysTenant struct {
+	ID           int32 `sql:"primary_key"`
+	DisplayName  string
+	APISubdomain string
+	UIDomain     *string
+	CreatedAt    time.Time
+	Active       bool
 }

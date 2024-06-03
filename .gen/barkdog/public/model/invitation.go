@@ -21,4 +21,5 @@ type Invitation struct {
 	CreatedAt      time.Time
 	ExpiresAt      time.Time
 	AcceptedAt     *time.Time
+	TenantID       int32
 }

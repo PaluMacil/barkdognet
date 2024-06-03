@@ -16,4 +16,5 @@ type SysRole struct {
 	DisplayName string
 	Description string
 	CreatedAt   time.Time
+	TenantID    int32
 }

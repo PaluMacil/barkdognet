@@ -23,6 +23,7 @@ type blogCommentTable struct {
 	Body       postgres.ColumnString
 	Status     postgres.ColumnString
 	CreatedAt  postgres.ColumnTimestampz
+	TenantID   postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,8 +70,9 @@ func newBlogCommentTableImpl(schemaName, tableName, alias string) blogCommentTab
 		BodyColumn       = postgres.StringColumn("body")
 		StatusColumn     = postgres.StringColumn("status")
 		CreatedAtColumn  = postgres.TimestampzColumn("created_at")
-		allColumns       = postgres.ColumnList{IDColumn, AuthorIDColumn, BlogPostIDColumn, BodyColumn, StatusColumn, CreatedAtColumn}
-		mutableColumns   = postgres.ColumnList{AuthorIDColumn, BlogPostIDColumn, BodyColumn, StatusColumn, CreatedAtColumn}
+		TenantIDColumn   = postgres.IntegerColumn("tenant_id")
+		allColumns       = postgres.ColumnList{IDColumn, AuthorIDColumn, BlogPostIDColumn, BodyColumn, StatusColumn, CreatedAtColumn, TenantIDColumn}
+		mutableColumns   = postgres.ColumnList{AuthorIDColumn, BlogPostIDColumn, BodyColumn, StatusColumn, CreatedAtColumn, TenantIDColumn}
 	)
 
 	return blogCommentTable{
@@ -83,6 +85,7 @@ func newBlogCommentTableImpl(schemaName, tableName, alias string) blogCommentTab
 		Body:       BodyColumn,
 		Status:     StatusColumn,
 		CreatedAt:  CreatedAtColumn,
+		TenantID:   TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

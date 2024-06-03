@@ -23,6 +23,7 @@ type sysSessionTable struct {
 	CreatedAt    postgres.ColumnTimestampz
 	IPAddress    postgres.ColumnString
 	UserAgent    postgres.ColumnString
+	TenantID     postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,8 +70,9 @@ func newSysSessionTableImpl(schemaName, tableName, alias string) sysSessionTable
 		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
 		IPAddressColumn    = postgres.StringColumn("ip_address")
 		UserAgentColumn    = postgres.StringColumn("user_agent")
-		allColumns         = postgres.ColumnList{IDColumn, SysUserIDColumn, SessionTokenColumn, CreatedAtColumn, IPAddressColumn, UserAgentColumn}
-		mutableColumns     = postgres.ColumnList{SysUserIDColumn, SessionTokenColumn, CreatedAtColumn, IPAddressColumn, UserAgentColumn}
+		TenantIDColumn     = postgres.IntegerColumn("tenant_id")
+		allColumns         = postgres.ColumnList{IDColumn, SysUserIDColumn, SessionTokenColumn, CreatedAtColumn, IPAddressColumn, UserAgentColumn, TenantIDColumn}
+		mutableColumns     = postgres.ColumnList{SysUserIDColumn, SessionTokenColumn, CreatedAtColumn, IPAddressColumn, UserAgentColumn, TenantIDColumn}
 	)
 
 	return sysSessionTable{
@@ -83,6 +85,7 @@ func newSysSessionTableImpl(schemaName, tableName, alias string) sysSessionTable
 		CreatedAt:    CreatedAtColumn,
 		IPAddress:    IPAddressColumn,
 		UserAgent:    UserAgentColumn,
+		TenantID:     TenantIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

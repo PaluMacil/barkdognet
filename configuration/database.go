@@ -27,5 +27,8 @@ func (dbc *Database) ConnectionString() string {
 
 func (dbc *Database) PortInt() int {
 	i, _ := strconv.Atoi(dbc.Port)
+	if i == 0 {
+		return 5432
+	}
 	return i
 }

@@ -10,4 +10,5 @@ package model
 type BlogCategory struct {
 	ID           int32 `sql:"primary_key"`
 	CategoryName string
+	TenantID     int32
 }
